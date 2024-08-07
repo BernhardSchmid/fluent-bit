@@ -179,8 +179,10 @@ int flb_log_event_decoder_decode_timestamp(msgpack_object *input,
             return FLB_EVENT_DECODER_ERROR_WRONG_TIMESTAMP_TYPE;
         }
 
-        output->tm.tv_sec  = (int32_t) FLB_BSWAP_32(*((uint32_t *) &input->via.ext.ptr[0]));
-        output->tm.tv_nsec = (int32_t) FLB_BSWAP_32(*((uint32_t *) &input->via.ext.ptr[4]));
+        // output->tm.tv_sec  = (int32_t) FLB_BSWAP_32(*((uint32_t *) &input->via.ext.ptr[0]));
+        // output->tm.tv_nsec = (int32_t) FLB_BSWAP_32(*((uint32_t *) &input->via.ext.ptr[4]));
+        output->tm.tv_sec  = FLB_BIGENDIAN_READ_INT32(*((uint32_t *) &input->via.ext.ptr[0]));
+        output->tm.tv_nsec = FLB_BIGENDIAN_READ_INT32(*((uint32_t *) &input->via.ext.ptr[4]));
     }
     else {
         return FLB_EVENT_DECODER_ERROR_WRONG_TIMESTAMP_TYPE;

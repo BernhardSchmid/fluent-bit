@@ -102,4 +102,37 @@ static inline uint64_t FLB_BSWAP_64(uint64_t value)
 
 #endif
 
+
+union flb_be32 {
+    char     raw[4];
+    uint32_t dword;
+};
+
+static inline uint32_t FLB_BIGENDIAN_WRITE_INT32(uint32_t value)
+{
+    union flb_be32 output;
+
+    // printf("====== encoding big endian - source: 0x%08x\n", value);
+    output.raw[0] = (char)((value & 0xff000000) >> 24);
+    output.raw[1] = (char)((value & 0x00ff0000) >> 16);
+    output.raw[2] = (char)((value & 0x0000ff00) >> 8);
+    output.raw[3] = (char)((value & 0x000000ff));
+
+    // printf("====== encoding big endian - result: 0x%08x\n\n", output);
+
+    return output.dword;
+}
+
+static inline uint32_t FLB_BIGENDIAN_READ_INT32(uint32_t value)
+{
+    uint32_t output;
+
+    // printf("====== decoding big endian - source: 0x%08x\n", value);
+    output = (((value & 0xff000000) >> 24) | ((value & 0x00ff0000) >> 8) | ((value & 0x0000ff00) << 8) | ((value & 0x000000ff) << 24));
+    // printf("====== decoding big endian - result: 0x%08x\n\n", output);
+
+    return output;
+}
+
+
 #endif
